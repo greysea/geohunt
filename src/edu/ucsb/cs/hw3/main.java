@@ -88,8 +88,6 @@ public class main extends Activity {
 			alert.show();
 		} else {
 			// register with server
-			// send name and server to register class
-
 			String u = server.toString() + "register?name=" + n	+ "&&" + "registration_id=" + C2DMessaging.getRegistrationId(getApplicationContext()) + "&&" + "phonetype=android";
 
 			Log.d("url", u);
@@ -118,6 +116,7 @@ public class main extends Activity {
 
 				if (stat.getInt(code) == 0) {
 					// success
+					// send token to register class
 					String t = res.getString(token);
 					Intent in = new Intent(context, register.class);
 					in.putExtra(token, t);
@@ -129,7 +128,6 @@ public class main extends Activity {
 				}
 				rd.close();
 			} finally {
-	
 				reg.disconnect();
 			}
 
