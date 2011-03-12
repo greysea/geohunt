@@ -12,7 +12,9 @@ public class register extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register);
         
-      
+   //     String name = this.getStringArrayExtra("name");
+        
+
     }
 
 
