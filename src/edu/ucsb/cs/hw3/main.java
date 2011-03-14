@@ -3,6 +3,7 @@ package edu.ucsb.cs.hw3;
 import java.io.BufferedReader;
 
 import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -36,10 +37,11 @@ import com.google.android.c2dm.C2DMessaging;
 
 public class main extends Activity {
 	Context context = null;
+	private EditText name;
 
 	// fixed server now; return back to other server later
-	public static final String server = "http://marrow.cs.ucsb.edu:3000/";
-
+	//public static final String server = "http://marrow.cs.ucsb.edu:3000/";
+	public static final String server = "http://cs176b.heroku.com/";
 	public static final String email = "ucsb.cs.176b@gmail.com";
 	public static final String status = "status";
 	public static final String code = "code";
@@ -53,7 +55,11 @@ public class main extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		context = this;
+		name = (EditText) findViewById(R.id.name1);
 
+		if(name == null) {
+			Log.e("NAME", "IS NULL OMGOMGOMGOM");
+		}
 		String id = C2DMessaging.getRegistrationId(context);
 		if (id != null && !"".equals(id)) {
 			// don't register because already registered
@@ -67,10 +73,11 @@ public class main extends Activity {
 	}
 
 	public void onClick(View v) throws IOException, JSONException {
-		final EditText name = (EditText) findViewById(R.id.name);
 		// final EditText server = (EditText) findViewById(R.id.server);
+		
 		String n = name.getText().toString();
 		// String ser = server.getText().toString();
+		Log.d("NAME", n);
 
 		if (n.length() == 0 || server.length() == 0) {
 			// need to specify both name and server
@@ -88,47 +95,36 @@ public class main extends Activity {
 			alert.show();
 		} else {
 			// register with server
-			String u = server.toString() + "register?name=" + n	+ "&&" + "registration_id=" + C2DMessaging.getRegistrationId(getApplicationContext()) + "&&" + "phonetype=android";
+			String u = server.toString() + "register?name=" + n + "&&"
+					+ "registration_id="
+					+ C2DMessaging.getRegistrationId(getApplicationContext())
+					+ "&&" + "phonetype=android";
 
 			Log.d("url", u);
 
 			URL url = new URL(u);
-			HttpURLConnection reg = (HttpURLConnection) url.openConnection();
+			URLConnection reg = (URLConnection) url.openConnection();
 
-			try {
-				InputStream rd = new BufferedInputStream(reg.getInputStream());
+			JSONObject p = phoneAPI.parse(reg);
+			JSONObject stat = p.getJSONObject(status.toString());
+
+			int c = stat.getInt(code);
+			if (c == 0  || c == 1) {
+				// success
+				// send token to register class
+				Log.d(code, "0");
+				JSONObject res = p.getJSONObject(response.toString());
+				String t = res.getString(token);
+				Log.d(token, t);
+				Intent in = new Intent(context, register.class);
+				in.putExtra(token, t);
+				startActivity(in);
 				
-				int c;
-				String resp = ""; 
-				while((c = rd.read()) != -1)
-				{
-					char d = (char) c;
-					String temp = Character.toString(d);
-					resp= resp+ temp;
-				}
-				Log.d("response", resp);
-	
-				JSONTokener toke = new JSONTokener(resp);
-				JSONObject parse = new JSONObject(toke);
-
-				JSONObject stat = parse.getJSONObject(status.toString());
-				JSONObject res = parse.getJSONObject(response.toString());
-
-				if (stat.getInt(code) == 0) {
-					// success
-					// send token to register class
-					String t = res.getString(token);
-					Intent in = new Intent(context, register.class);
-					in.putExtra(token, t);
-					startActivity(in);
-				} else if (stat.getInt(code) == 99) {
-					// failed to create user
-					Toast.makeText(context, "Failed to create user",
-							Toast.LENGTH_SHORT).show();
-				}
-				rd.close();
-			} finally {
-				reg.disconnect();
+			} 
+			else {
+				// failed to create user
+				Toast.makeText(context, phoneAPI.error(stat.getInt(code)),
+						Toast.LENGTH_SHORT).show();
 			}
 
 		}

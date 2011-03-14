@@ -4,43 +4,81 @@ import java.io.IOException;
 
 import org.json.JSONException;
 
-import android.app.Activity;
+import com.google.android.maps.MapActivity;
+
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.content.Intent;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.view.MenuItem;
 
-public class register extends Activity {
+import android.app.Activity;
+import android.content.Context;
+
+
+public class register extends MapActivity {
+
 	final String token = "token";
-	
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.register);
-        
-        Intent starter = getIntent();
-        String t = starter.getStringExtra(token);
-    	String q = null;
-    	int cancel = 0;
-        try {
-        	String s;
-        	http://marrow.cs.ucsb.edu:3000/checkin?token=3fcdcf00836d82e87c0b27a0555ca6bb78b6cc28&&longitude=-33&&latitude=123.4&&cid=1
-			 q = phoneAPI.checkin("http://marrow.cs.ucsb.edu:3000/", 1, -33, 123.4, t);
-        	cancel = phoneAPI.cancel_checkin("http://marrow.cs.ucsb.edu:3000/", 1, t);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Log.d("mess", q);
-		Log.d("cancel ", Integer.toString(cancel));
+	final String checkin = "Checkin";
+	final String canchk = "Cancel Checkin";
+	final String upload = "Upload";
+
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.mapview);
 		
-    }
+	}
+
+	/*
+	 * @Override(non-Javadoc)
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(1, 1, 1, checkin);
+		menu.add(1, 2, 2, canchk);
+		menu.add(1, 3, 3, upload);
+		return super.onCreateOptionsMenu(menu);
+
+	}
 
 
-
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.checkin:
+			checkin();
+			return true;
+		case R.id.canchk:
+			canchk();
+			return true;
+		case R.id.upload:
+			upload();
+			return true;
+		}
+		return false;
+	}
+*/
+	public void checkin()
+	{
+		
+	}
 	
+	public void canchk()
+	{
+		
+	}
+	
+	public void upload()
+	{
+		
+	}
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+
+
 }
